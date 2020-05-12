@@ -68,6 +68,8 @@ public class ArrayList<E> {
 			elements[i - 1] = elements[i];
 		}
 		elements[size--] = null; 
+		trim();
+		
 		return oldElement;
 	}
 	
@@ -111,6 +113,23 @@ public class ArrayList<E> {
 		elements = newElements; 
 		
 		System.out.println(oldCapacity + "扩容:" + newCapacity);
+	}
+	
+	private void trim() {
+		int oldCapacity = elements.length;
+		int newCapacity = oldCapacity >> 1;
+		if (newCapacity <= size || newCapacity < DEFAULT_CAPACITY) {
+			return;
+		}
+		
+		E[] newElements = (E[])new Object[newCapacity];
+		for (int i = 0; i < size; i++) {
+			newElements[i] = elements[i];
+		}
+		elements = newElements; 
+		
+		System.out.println(oldCapacity + "缩容:" + newCapacity);
+		
 	}
 	
 	private void rangeCheck(int index) {
