@@ -1,7 +1,5 @@
 package com.hh.test.exercise;
-
-import javax.xml.soap.Node;
-
+  
 import com.hh.AbstractList;
 
 public class SingleLinkedList<E> extends AbstractList<E> {
@@ -26,9 +24,8 @@ public class SingleLinkedList<E> extends AbstractList<E> {
 	}
 
 	@Override
-	public E get(int index) { 
-		rangeCheck(index);
-		return null;
+	public E get(int index) {  
+		return node(index).element;
 	}
 
 	@Override
