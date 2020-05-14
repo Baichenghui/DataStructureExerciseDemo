@@ -2,6 +2,12 @@ package com.hh.circle;
 
 import com.hh.AbstractList; 
 
+/**
+ * 单向循环链表  （对比单向链表需要在添加删除的时候处理结点指向）
+ * @author b9i
+ *
+ * @param <E>
+ */
 public class SingleCirclrLinkedList<E> extends AbstractList<E> {
 	
 	private Node<E> first;
