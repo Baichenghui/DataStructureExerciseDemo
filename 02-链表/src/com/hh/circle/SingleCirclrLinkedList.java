@@ -11,6 +11,7 @@ import com.hh.AbstractList;
 public class SingleCirclrLinkedList<E> extends AbstractList<E> {
 	
 	private Node<E> first;
+	private Node<E> current; 
 	
 	private static class Node<E> {
 		E element;
@@ -19,6 +20,13 @@ public class SingleCirclrLinkedList<E> extends AbstractList<E> {
 		public Node(E element,Node<E> next) {
 			 this.element = element;
 			 this.next = next;
+		}
+		
+		@Override
+		public String toString() {
+			StringBuilder sb = new StringBuilder();
+			sb.append(element).append("_").append(next.element);
+			return sb.toString();
 		}
 	}
 
@@ -73,21 +81,21 @@ public class SingleCirclrLinkedList<E> extends AbstractList<E> {
 			if (size == 1) { 
 				first = null;
 			} else { 
-				first = first.next;
+				//先取出最后的节点，然后再做删除操作，不然先删除再取最后一个节点就不准确了
 				Node<E> last = node(size - 1);
+				first = first.next;
 				last.next = first;
 			}
 		} else {
 			Node<E>	prev = node(index - 1);
 			node = prev.next;
 			prev.next = node.next;
-		}
-		 
+		} 
 		size--;
 		
 		return node.element;
 	}
-
+	
 	@Override
 	public int indexOf(E element) {
 		if (element == null) { 
@@ -108,6 +116,51 @@ public class SingleCirclrLinkedList<E> extends AbstractList<E> {
 		
 		return NOT_FOUND_ELEMENTS;
 	}
+	
+	public E getCurrent() {
+		if (current == null) {
+			return null;
+		}
+		
+		return current.element;
+	}
+
+	public void reset() {
+		current = first;
+	}
+	
+	public E remove() {
+		if (current == null) {
+			return null;
+		}
+		Node<E> next = current.next; 
+		E element = remove(current);
+		if (size == 0) {
+			current = null;
+		} else {
+			current = next;
+		} 
+		return element;
+	}
+	
+	public E next() {
+		if (current == null) {
+			return null;
+		} else {
+			current = current.next; 
+			return current.element;
+		}
+	}
+	
+	private E remove(Node<E> node) {
+		if (node == null) {
+			return null;
+		} 
+		int index = indexOf(node.element);
+		E element = remove(index); 
+		  
+		return element;
+	}
 
 	private Node<E> node(int index) {
 		rangeCheck(index);
@@ -118,5 +171,23 @@ public class SingleCirclrLinkedList<E> extends AbstractList<E> {
 		}
 		
 		return node;
+	}
+	
+	@Override
+	public String toString() {
+		StringBuilder string = new StringBuilder();
+		string.append("size=").append(size).append(", [");
+		Node<E> node = first;
+		for (int i = 0; i < size; i++) {
+			if (i != 0) {
+				string.append(", ");
+			}
+			
+			string.append(node);
+			
+			node = node.next;
+		}
+		string.append("]");
+		return string.toString();
 	}
 }
