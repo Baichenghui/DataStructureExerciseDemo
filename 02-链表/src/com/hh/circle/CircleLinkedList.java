@@ -1,6 +1,6 @@
 package com.hh.circle;
 
-import com.hh.AbstractList;
+import com.hh.AbstractList; 
 
 /**
  * 双向循环链表	（对比双向链表需要在添加删除的时候处理结点指向））
@@ -12,6 +12,7 @@ public class CircleLinkedList<E> extends AbstractList<E> {
 	
 	private Node<E> first;
 	private Node<E> last;
+	private Node<E> current; 
 	
 	private static class Node<E> {
 		E element;
@@ -75,14 +76,14 @@ public class CircleLinkedList<E> extends AbstractList<E> {
 		 
 		if (index == size) {//往最后尾结点添加节点
 			Node<E> oldLast = last; 
-			last = new Node<>(element, oldLast.prev, first);
+			last = new Node<>(element, oldLast, first);
 			if (oldLast == null) {//往链表添加第一个节点
 				first = last;
 				first.next = first;
 				first.prev = first;
 			} else {
 				oldLast.next = last; 
-				last.prev = oldLast;
+				first.prev = last;
 			}
 		} else {//往index节点前添加节点
 			Node<E> next = node(index);
@@ -92,7 +93,7 @@ public class CircleLinkedList<E> extends AbstractList<E> {
 			next.prev = node;
 			prev.next = node; 
 			
-			if (size == 1) {
+			if (first == last) {
 				first = node;
 			} 
 		}
@@ -104,25 +105,7 @@ public class CircleLinkedList<E> extends AbstractList<E> {
 	public E remove(int index) { 
 		rangeCheck(index);
 		
-		Node<E> node = node(index);
-		Node<E> prev = node.prev;
-		Node<E> next = node.next;
-		
-		if (prev == null) { //删除的是头结点
-			first = next; 
-		} else {  
-			prev.next = next;
-		}
-
-		if (next == null) { //删除的是尾结点
-			last = prev; 
-		} else {
-			next.prev = prev;
-		} 
-		
-		size--;
-		
-		return node.element;
+		return remove(node(index));
 	}
 
 	@Override
@@ -144,6 +127,77 @@ public class CircleLinkedList<E> extends AbstractList<E> {
 		
 		return NOT_FOUND_ELEMENTS;
 	}
+	
+	public E getCurrent() {
+		if (current == null) {
+			return null;
+		}
+		
+		return current.element;
+	}
+
+	public void reset() {
+		 current = first;
+	}
+	
+	/**
+	 * 移除current节点 
+	 */
+	public E remove() {
+		if (current == null) {
+			return null;
+		} 
+		
+		Node<E> next = current.next;
+		E element = remove(current);
+		if (size == 0) {
+			current = null;
+		} else {
+			current = next;
+		} 
+		 
+		return element;
+	}
+	
+	/**
+	 * current下一个节点 
+	 */
+	public E next() {
+		if (current == null) {
+			return null;
+		} 
+		current = current.next;
+		return current.element;
+	}
+	
+	/**
+	 * 移除指定节点
+	 * @param node 
+	 */
+	private E remove(Node<E> node) { 
+		if (size == 1) {
+			first = null;
+			last = null;
+		} else {
+			Node<E> prev = node.prev;
+			Node<E> next = node.next;
+			
+			prev.next = next;
+			next.prev = prev;
+			
+			if (node == first) {
+				first = next;
+			}
+			
+			if (node == last) {
+				last = prev;
+			}
+		}
+		 
+		size--;
+		
+		return node.element;
+	}
 
 	private Node<E> node(int index) { 
 		rangeCheck(index);
@@ -161,6 +215,24 @@ public class CircleLinkedList<E> extends AbstractList<E> {
 			}
 			return node;
 		} 
+	}
+	
+	@Override
+	public String toString() {
+		StringBuilder string = new StringBuilder();
+		string.append("size=").append(size).append(", [");
+		Node<E> node = first;
+		for (int i = 0; i < size; i++) {
+			if (i != 0) {
+				string.append(", ");
+			}
+			
+			string.append(node);
+			
+			node = node.next;
+		}
+		string.append("]");
+		return string.toString();
 	}
 }
 
